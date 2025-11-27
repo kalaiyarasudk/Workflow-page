@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Access Approval Workflow</title>
+    <style>
+      :root {
+        font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        color: #101828;
+        background-color: #f4f6fb;
+      }
+
+      body {
+        margin: 0;
+        padding: 0 1.5rem 2rem;
+      }
+
+      header {
+        max-width: 960px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 3rem 0 2rem;
+      }
+
+      header h1 {
+        margin: 0 0 0.8rem;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+      }
+
+      header p {
+        margin: 0 auto;
+        max-width: 620px;
+        color: #475467;
+        line-height: 1.6;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+
+      section {
+        background: #fff;
+        border-radius: 16px;
+        padding: 1.75rem;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .stage {
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        padding: 1.25rem;
+        background: #fafbfe;
+      }
+
+      h2 {
+        margin-top: 0;
+        font-size: 1.2rem;
+      }
+
+      ul {
+        padding-left: 1.2rem;
+        margin-bottom: 0;
+        color: #475467;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+      }
+
+      label {
+        font-weight: 600;
+        color: #344054;
+      }
+
+      input[type="text"],
+      select,
+      textarea {
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        padding: 0.65rem 0.85rem;
+        font-size: 0.95rem;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .checkbox-group label {
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #475467;
+      }
+
+      button {
+        background: #0054d1;
+        color: #fff;
+        border: none;
+        border-radius: 999px;
+        padding: 0.75rem 1.75rem;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #003b94;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .timeline-step {
+        position: relative;
+        padding-left: 2.5rem;
+        min-height: 120px;
+      }
+
+      .timeline-step::before {
+        content: attr(data-step);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #2970ff, #004aad);
+        color: #fff;
+        display: grid;
+        place-content: center;
+        font-weight: 700;
+      }
+
+      .timeline-step h3 {
+        margin-top: 0;
+        font-size: 1rem;
+      }
+
+      .timeline-step p {
+        margin-bottom: 0;
+        color: #475467;
+        line-height: 1.5;
+      }
+
+      .download-box {
+        background: #ecf3ff;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .download-box button {
+        background: #101828;
+      }
+
+      .template-block {
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        background: #f9fbff;
+      }
+
+      .info-box {
+        background: #e8fff3;
+        border: 1px solid #12b76a1a;
+        color: #027a48;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .tab-nav {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+      }
+
+      .tab-button {
+        border: 1px solid #d0d5dd;
+        background: #fff;
+        color: #475467;
+        border-radius: 999px;
+        padding: 0.5rem 1.2rem;
+        cursor: pointer;
+      }
+
+      .tab-button.active {
+        background: #0f62fe;
+        color: #fff;
+        border-color: #0f62fe;
+      }
+
+      .tab-content {
+        border: 1px solid #e4e7ec;
+        border-radius: 16px;
+        padding: 1.5rem;
+        background: #fdfefe;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .status-pending {
+        background: #fff7ed;
+        color: #c2410c;
+      }
+
+      .status-success {
+        background: #ecfdf3;
+        color: #027a48;
+      }
+
+      .status-info {
+        background: #eff4ff;
+        color: #1c46ff;
+      }
+
+      .status-warning {
+        background: #fff4e6;
+        color: #c05621;
+      }
+
+      .status-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+        margin-bottom: 0.35rem;
+      }
+
+      .status-detail {
+        color: #475467;
+        margin-top: 0;
+      }
+
+      .toast {
+        border-radius: 12px;
+        padding: 0.9rem 1.1rem;
+        margin-top: 1rem;
+        display: none;
+      }
+
+      .toast.show {
+        display: block;
+      }
+
+      .toast.info {
+        background: #eff4ff;
+        border: 1px solid #b2c5ff;
+        color: #1c46ff;
+      }
+
+      .toast.success {
+        background: #ecfdf3;
+        border: 1px solid #6ce9a6;
+        color: #027a48;
+      }
+
+      .toast.warning {
+        background: #fff7ed;
+        border: 1px solid #fdba74;
+        color: #c2410c;
+      }
+
+      .file-hint {
+        font-size: 0.85rem;
+        color: #475467;
+        margin: 0.25rem 0 0;
+      }
+
+      .attachment-list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+      }
+
+      .attachment-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.35rem 0;
+        border-bottom: 1px solid #edf1f7;
+        font-size: 0.92rem;
+      }
+
+      .attachment-list li:last-child {
+        border-bottom: none;
+      }
+
+      .attachment-list button {
+        border: 1px solid #d0d5dd;
+        background: #fff;
+        color: #344054;
+        border-radius: 999px;
+        padding: 0.2rem 0.9rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+
+      .action-bar {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .secondary-btn {
+        background: transparent;
+        color: #0f172a;
+        border: 1px solid #d0d5dd;
+      }
+
+      .warning-box {
+        background: #fff5f5;
+        border: 1px solid #fda29b;
+        color: #b42318;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-top: 1rem;
+      }
+
+      footer {
+        text-align: center;
+        color: #98a1b3;
+        margin-top: 2rem;
+      }
+
+      .primary-nav {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        margin: 1rem auto 2rem;
+        flex-wrap: wrap;
+      }
+
+      .primary-tab {
+        border: 1px solid #d0d5dd;
+        background: #fff;
+        color: #475467;
+        border-radius: 999px;
+        padding: 0.6rem 1.6rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+
+      .primary-tab.active {
+        background: #004aad;
+        color: #fff;
+        border-color: #004aad;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p class="badge">Four-Level Approval Flow</p>
+      <h1>Access & Responsibility Approval Portal</h1>
+      <p>
+        Streamlined, auditable access requests with AppSec validation, App
+        Owner oversight, and Sysadmin fulfillment. Each step captures comments,
+        attachments, and status changes for compliance-ready traceability.
+      </p>
+    </header>
+
+    <main>
+      <nav class="primary-nav">
+        <button class="primary-tab active" data-view="request">
+          Request Portal
+        </button>
+        <button class="primary-tab" data-view="testing">Testing Lab</button>
+      </nav>
+
+      <div id="request-view">
+        <section>
+          <h2>Workflow Snapshot</h2>
+          <div class="timeline">
+            <div class="timeline-step" data-step="1">
+              <h3>User Request</h3>
+              <p>
+                Submit SSO-authenticated request with job details and supporting
+                templates for creation, responsibility changes, or removal.
+              </p>
+            </div>
+            <div class="timeline-step" data-step="2">
+              <h3>AppSec Validation (L1)</h3>
+              <p>
+                Review data, comment on issues, or approve when compliant. Push
+                back incorrect submissions to user with actionable feedback.
+              </p>
+            </div>
+            <div class="timeline-step" data-step="3">
+              <h3>App Owner Review (A/B)</h3>
+              <p>
+                Owners ensure business relevance and approve responsibilities.
+                Any rejection loops back to AppSec for further action.
+              </p>
+            </div>
+            <div class="timeline-step" data-step="4">
+              <h3>Sysadmin Fulfillment</h3>
+              <p>
+                Auto-generate ServiceNow RITM, apply changes, and attach
+                evidence, closing the loop with final notifications.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>User Submission</h2>
+          <form id="user-form">
+          <div class="split">
+            <div class="form-group">
+              <label for="sso">SSO</label>
+              <input id="sso" type="text" placeholder="e.g. jsmith@corp" />
+            </div>
+            <div class="form-group">
+              <label for="sso-status">SSO Status</label>
+              <select id="sso-status">
+                <option>Active</option>
+                <option>Disabled</option>
+                <option>Pending</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="form-group">
+              <label for="first-name">First Name</label>
+              <input id="first-name" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="last-name">Last Name</label>
+              <input id="last-name" type="text" />
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="form-group">
+              <label for="job-title">Job Title</label>
+              <input id="job-title" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="job-function">Job Function</label>
+              <input id="job-function" type="text" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="business">Business Unit</label>
+            <input id="business" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="ritm">ServiceNow RITM (if already raised)</label>
+            <input
+              id="ritm"
+              type="text"
+              placeholder="e.g. RITM0012345"
+            />
+          </div>
+
+          <div class="form-group" id="request-type-group">
+            <label>Request Type</label>
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" id="req-user-creation" />
+                User creation / reactivation
+              </label>
+              <label>
+                <input type="checkbox" id="req-responsibility-request" /> Responsibility request
+              </label>
+              <label>
+                <input type="checkbox" id="req-responsibility-removal" /> Responsibility removal
+              </label>
+            </div>
+          </div>
+
+          <div id="user-creation-block" class="template-block hidden">
+            <div class="info-box" style="margin-bottom: 1rem">
+              <strong>User creation / reactivation details</strong>
+              <p style="margin: 0">
+                Use the template below to capture mandatory provisioning details.
+                Ensure job data is accurate before submission or reactivation.
+              </p>
+            </div>
+            <div class="download-box">
+              <div>
+                <strong>User Creation / Reactivation Template</strong>
+                <p style="margin: 0; color: #475467">
+                  Download the form, fill required access attributes, and attach
+                  the completed file for AppSec validation.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="template-download"
+                data-template="creation"
+              >
+                Download template
+              </button>
+            </div>
+            <div class="form-group">
+              <label for="upload-creation">Attach completed template</label>
+              <input id="upload-creation" type="file" />
+              <p class="file-hint" data-file-hint="upload-creation">
+                No file selected
+              </p>
+            </div>
+          </div>
+
+          <div id="responsibility-request-block" class="template-block hidden">
+            <div class="download-box">
+              <div>
+                <strong>Responsibility Request Template</strong>
+                <p style="margin: 0; color: #475467">
+                  Download the latest CAV file, list the required responsibilities,
+                  then upload the completed sheet.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="template-download"
+                data-template="responsibility"
+              >
+                Download template
+              </button>
+            </div>
+            <div class="form-group">
+              <label for="upload-request">Attach updated template</label>
+              <input id="upload-request" type="file" />
+              <p class="file-hint" data-file-hint="upload-request">
+                No file selected
+              </p>
+            </div>
+          </div>
+
+          <div id="responsibility-removal-block" class="template-block hidden">
+            <div class="download-box">
+              <div>
+                <strong>Responsibility Removal Template</strong>
+                <p style="margin: 0; color: #475467">
+                  Specify responsibilities to be removed and include context for
+                  deprovisioning.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="template-download"
+                data-template="removal"
+              >
+                Download template
+              </button>
+            </div>
+            <div class="form-group">
+              <label for="upload-removal">Attach removal evidence</label>
+              <input id="upload-removal" type="file" />
+              <p class="file-hint" data-file-hint="upload-removal">
+                No file selected
+              </p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="justification">Business justification</label>
+            <textarea id="justification"></textarea>
+          </div>
+
+          <button type="submit">Submit to AppSec</button>
+          </form>
+        </section>
+
+        <section>
+          <h2>Role Workspaces</h2>
+          <div class="grid">
+            <article class="stage">
+              <h3>AppSec (L1 Approver)</h3>
+              <ul>
+                <li>Validation checklist & SLA timer</li>
+                <li>Reject with comments or approve</li>
+                <li>Push back to user for corrections</li>
+              </ul>
+            </article>
+            <article class="stage">
+              <h3>App Owners A/B</h3>
+              <ul>
+                <li>View AppSec notes and attachments</li>
+                <li>Parallel approvals with audit log</li>
+                <li>Decision required from both A and B</li>
+              </ul>
+            </article>
+            <article class="stage">
+              <h3>Sysadmin</h3>
+              <ul>
+                <li>Auto ServiceNow RITM creation</li>
+                <li>Execution notes & evidence upload</li>
+                <li>Completion notifications to stakeholders</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <div id="testing-view" class="hidden">
+        <section>
+          <h2>Interactive Role Testing</h2>
+          <p style="margin-top: 0; color: #475467">
+            Use the tabs below to step through each console and test how requests
+            evolve across the workflow.
+          </p>
+          <div class="status-summary">
+            <span>Current request status:</span>
+            <span id="global-status" class="status-pill status-pending">
+              Draft
+            </span>
+          </div>
+          <p id="global-status-detail" class="status-detail">
+            Start by submitting a request to enable the live workflow demo.
+          </p>
+          <div class="tab-nav" role="tablist">
+            <button class="tab-button active" data-tab="user" role="tab">
+              User
+            </button>
+            <button class="tab-button" data-tab="appsec" role="tab">
+              AppSec (L1)
+            </button>
+            <button class="tab-button" data-tab="app-owner" role="tab">
+              App Owner
+            </button>
+            <button class="tab-button" data-tab="sysadmin" role="tab">
+              Sysadmin
+            </button>
+          </div>
+
+          <div id="tab-user" class="tab-content">
+            <h3>User Console</h3>
+            <p>
+              Status:
+              <span id="user-status-pill" class="status-pill status-pending">
+                Draft
+              </span>
+            </p>
+            <p id="user-status-detail" class="status-detail">
+              Draft in progress.
+            </p>
+            <div class="form-group">
+              <label for="user-comments">Comments to AppSec</label>
+              <textarea id="user-comments" placeholder="Add context for validation"></textarea>
+            </div>
+            <div class="action-bar">
+              <button type="button" id="btn-save-draft" class="secondary-btn">
+                Save draft
+              </button>
+              <button type="button" id="btn-submit-request">Submit request</button>
+            </div>
+          </div>
+
+          <div id="tab-appsec" class="tab-content hidden">
+            <h3>AppSec Validation Desk</h3>
+            <p>
+              Status:
+              <span id="appsec-status-pill" class="status-pill status-info">
+                Waiting for submission
+              </span>
+            </p>
+            <p id="appsec-status-detail" class="status-detail">
+              Submit a request to start AppSec review.
+            </p>
+          <div id="appsec-request-data" class="template-block hidden">
+            <div class="split">
+              <div>
+                <strong>Submitted request overview</strong>
+                <p id="appsec-request-summary" class="status-detail">
+                  No submission available.
+                </p>
+              </div>
+              <div>
+                <strong>Attachments</strong>
+                <ul
+                  id="appsec-attachment-list"
+                  class="attachment-list"
+                  style="margin-top: 0.35rem"
+                >
+                  <li>No files uploaded yet.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Validation checklist</label>
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" id="appsec-sso" />
+                SSO details verified
+              </label>
+              <label>
+                <input type="checkbox" id="appsec-template" />
+                Template validated
+              </label>
+              <label>
+                <input type="checkbox" id="appsec-justification" />
+                Business justification complete
+              </label>
+              <label>
+                <input type="checkbox" id="appsec-sod" />
+                Segregation of duties (SoD) verified
+              </label>
+              <label>
+                <input type="checkbox" id="appsec-invalid" />
+                Data invalid – push back to user
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="appsec-feedback">Feedback / push-back comments</label>
+            <textarea id="appsec-feedback"></textarea>
+          </div>
+          <div id="appsec-pushback" class="warning-box hidden">
+            Detected invalid data. Provide corrective comments and push the
+            request back to the user for updates.
+          </div>
+          <div class="action-bar">
+            <button
+              type="button"
+              id="btn-request-info"
+              class="secondary-btn"
+              disabled
+            >
+              Request info / Push back
+            </button>
+            <button type="button" id="btn-approve-appsec" disabled>
+              Approve & send to App Owner
+            </button>
+          </div>
+        </div>
+
+        <div id="tab-app-owner" class="tab-content hidden">
+          <h3>App Owner A/B Review</h3>
+          <p>
+            Status:
+            <span id="owner-status-pill" class="status-pill status-info">
+              Waiting on AppSec
+            </span>
+          </p>
+          <p id="owner-status-detail" class="status-detail">
+            App Owners can act after AppSec approval.
+          </p>
+          <div id="owner-request-data" class="template-block hidden">
+            <div class="split">
+              <div>
+                <strong>Request context</strong>
+                <p id="owner-request-summary" class="status-detail">
+                  No submission available.
+                </p>
+              </div>
+              <div>
+                <strong>Attachments</strong>
+                <ul
+                  id="owner-attachment-list"
+                  class="attachment-list"
+                  style="margin-top: 0.35rem"
+                >
+                  <li>No files uploaded yet.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top: -0.5rem; color: #475467">
+            Either Owner A or Owner B can approve to forward the request.
+          </p>
+          <div class="split">
+            <div class="form-group">
+              <label for="app-owner-a">Owner A decision</label>
+              <select id="app-owner-a">
+                <option value="pending">Pending</option>
+                <option value="approve">Approve</option>
+                <option value="reject">Reject</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="app-owner-b">Owner B decision</label>
+              <select id="app-owner-b">
+                <option value="pending">Pending</option>
+                <option value="approve">Approve</option>
+                <option value="reject">Reject</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="owner-note">Notes to Sysadmin</label>
+            <textarea id="owner-note"></textarea>
+          </div>
+          <div id="owner-warning" class="warning-box hidden">
+            Need at least one owner approval before dispatching to Sysadmin.
+          </div>
+          <div class="action-bar">
+            <button
+              type="button"
+              id="btn-owner-sendback"
+              class="secondary-btn"
+              disabled
+            >
+              Send back to AppSec
+            </button>
+            <button type="button" id="btn-owner-approve" disabled>
+              Approve & dispatch
+            </button>
+          </div>
+        </div>
+
+        <div id="tab-sysadmin" class="tab-content hidden">
+          <h3>Sysadmin Fulfillment</h3>
+          <p>
+            Status:
+            <span id="sysadmin-status-pill" class="status-pill status-info">
+              Waiting on App Owners
+            </span>
+          </p>
+          <p id="sysadmin-status-detail" class="status-detail">
+            Moves here after App Owner approval.
+          </p>
+          <div id="sysadmin-request-data" class="template-block hidden">
+            <div class="split">
+              <div>
+                <strong>Provisioning context</strong>
+                <p id="sysadmin-request-summary" class="status-detail">
+                  No submission available.
+                </p>
+              </div>
+              <div>
+                <strong>Attachments</strong>
+                <ul
+                  id="sysadmin-attachment-list"
+                  class="attachment-list"
+                  style="margin-top: 0.35rem"
+                >
+                  <li>No files uploaded yet.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="evidence">Upload evidence</label>
+            <input id="evidence" type="file" />
+          </div>
+          <div class="form-group">
+            <label for="sysadmin-comments">Execution notes</label>
+            <textarea id="sysadmin-comments"></textarea>
+          </div>
+          <div class="action-bar">
+            <button
+              type="button"
+              id="btn-sysadmin-hold"
+              class="secondary-btn"
+              disabled
+            >
+              On-hold
+            </button>
+            <button type="button" id="btn-sysadmin-complete" disabled>
+              Complete request
+            </button>
+          </div>
+        </div>
+        </section>
+
+        <div id="app-toast" class="toast info" role="status"></div>
+      </div>
+    </main>
+
+    <footer>&copy; 2025 Approval Workflow Experience</footer>
+    <script>
+      const requestInputs = {
+        creation: document.getElementById("req-user-creation"),
+        add: document.getElementById("req-responsibility-request"),
+        remove: document.getElementById("req-responsibility-removal"),
+      };
+
+      const blocks = {
+        creation: document.getElementById("user-creation-block"),
+        add: document.getElementById("responsibility-request-block"),
+        remove: document.getElementById("responsibility-removal-block"),
+      };
+
+      function syncRequestVisibility() {
+        const creationSelected = requestInputs.creation.checked;
+
+        if (creationSelected) {
+          requestInputs.add.checked = false;
+          requestInputs.remove.checked = false;
+        }
+
+        requestInputs.add.disabled = creationSelected;
+        requestInputs.remove.disabled = creationSelected;
+
+        blocks.creation.classList.toggle("hidden", !creationSelected);
+        blocks.add.classList.toggle("hidden", !requestInputs.add.checked);
+        blocks.remove.classList.toggle("hidden", !requestInputs.remove.checked);
+      }
+
+      Object.values(requestInputs).forEach((input) => {
+        input.addEventListener("change", syncRequestVisibility);
+      });
+
+      syncRequestVisibility();
+
+      const primaryTabs = document.querySelectorAll(".primary-tab");
+      const requestView = document.getElementById("request-view");
+      const testingView = document.getElementById("testing-view");
+
+      primaryTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          primaryTabs.forEach((btn) => btn.classList.remove("active"));
+          tab.classList.add("active");
+          const target = tab.dataset.view;
+          const showTesting = target === "testing";
+          testingView.classList.toggle("hidden", !showTesting);
+          requestView.classList.toggle("hidden", showTesting);
+        });
+      });
+
+      const fileState = {
+        creation: null,
+        responsibility: null,
+        removal: null,
+      };
+
+      function bindFileInput(inputId, key) {
+        const input = document.getElementById(inputId);
+        const hint = document.querySelector(`[data-file-hint="${inputId}"]`);
+        if (!input) return;
+        input.addEventListener("change", (event) => {
+          const file = event.target.files[0] || null;
+          fileState[key] = file;
+          if (hint) {
+            hint.textContent = file
+              ? `Attached: ${file.name}`
+              : "No file selected";
+          }
+        });
+      }
+
+      bindFileInput("upload-creation", "creation");
+      bindFileInput("upload-request", "responsibility");
+      bindFileInput("upload-removal", "removal");
+
+      const templateContent = {
+        creation:
+          "Field,Description\nSSO,User's corporate SSO\nJob Title,Role title\nBusiness Unit,Owning business group\nAccess Needed,Describe systems/responsibilities\n",
+        responsibility:
+          "Responsibility,Description,Business Justification\nGL Inquiry,Read-only ledger access,Monthly reconciliation\nAP Approver,Approve invoices above threshold,Backup approver\n",
+        removal:
+          "Responsibility,Reason For Removal,Target Date\nGL Inquiry,Role change,2025-01-15\nAP Approver,Leaving department,2025-01-20\n",
+      };
+
+      const templateNames = {
+        creation: "user_creation_reactivation",
+        responsibility: "responsibility_request",
+        removal: "responsibility_removal",
+      };
+
+      function downloadTemplate(type) {
+        const content = templateContent[type];
+        if (!content) return;
+        const blob = new Blob([content], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${templateNames[type] || "template"}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        link.remove();
+        showToast(`Downloaded ${templateNames[type] || "template"} file.`, "info");
+      }
+
+      document.querySelectorAll(".template-download").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const type = btn.dataset.template;
+          downloadTemplate(type);
+        });
+      });
+
+      // Tab functionality
+      const tabButtons = document.querySelectorAll(".tab-button");
+      const tabPanels = {
+        user: document.getElementById("tab-user"),
+        appsec: document.getElementById("tab-appsec"),
+        "app-owner": document.getElementById("tab-app-owner"),
+        sysadmin: document.getElementById("tab-sysadmin"),
+      };
+
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.tab;
+          tabButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          Object.entries(tabPanels).forEach(([key, panel]) => {
+            panel.classList.toggle("hidden", key !== target);
+          });
+        });
+      });
+
+      const invalidCheckbox = document.getElementById("appsec-invalid");
+      const validationChecks = [
+        document.getElementById("appsec-sso"),
+        document.getElementById("appsec-template"),
+        document.getElementById("appsec-justification"),
+        document.getElementById("appsec-sod"),
+      ];
+      const pushbackNotice = document.getElementById("appsec-pushback");
+      const requestInfoBtn = document.getElementById("btn-request-info");
+      const approveBtn = document.getElementById("btn-approve-appsec");
+
+      const userForm = document.getElementById("user-form");
+      const userCommentsInput = document.getElementById("user-comments");
+      const appsecFeedbackInput = document.getElementById("appsec-feedback");
+      const ownerSelectA = document.getElementById("app-owner-a");
+      const ownerSelectB = document.getElementById("app-owner-b");
+      const ownerDispatchBtn = document.getElementById("btn-owner-approve");
+      const ownerWarning = document.getElementById("owner-warning");
+      const ownerNoteInput = document.getElementById("owner-note");
+      const btnOwnerSendback = document.getElementById("btn-owner-sendback");
+      const btnSysadminHold = document.getElementById("btn-sysadmin-hold");
+      const btnSysadminComplete = document.getElementById("btn-sysadmin-complete");
+      const sysadminCommentsInput = document.getElementById("sysadmin-comments");
+      const btnSaveDraft = document.getElementById("btn-save-draft");
+      const btnSubmitRequestConsole = document.getElementById("btn-submit-request");
+      const appToast = document.getElementById("app-toast");
+      const globalStatus = document.getElementById("global-status");
+      const globalStatusDetail = document.getElementById("global-status-detail");
+      const userStatusPill = document.getElementById("user-status-pill");
+      const userStatusDetail = document.getElementById("user-status-detail");
+      const appsecStatusPill = document.getElementById("appsec-status-pill");
+      const appsecStatusDetail = document.getElementById("appsec-status-detail");
+      const appsecRequestData = document.getElementById("appsec-request-data");
+      const appsecRequestSummary = document.getElementById(
+        "appsec-request-summary"
+      );
+      const appsecAttachmentList = document.getElementById(
+        "appsec-attachment-list"
+      );
+      const ownerStatusPill = document.getElementById("owner-status-pill");
+      const ownerStatusDetail = document.getElementById("owner-status-detail");
+      const ownerRequestData = document.getElementById("owner-request-data");
+      const ownerRequestSummary = document.getElementById(
+        "owner-request-summary"
+      );
+      const ownerAttachmentList = document.getElementById(
+        "owner-attachment-list"
+      );
+      const sysadminStatusPill = document.getElementById("sysadmin-status-pill");
+      const sysadminStatusDetail = document.getElementById(
+        "sysadmin-status-detail"
+      );
+      const sysadminRequestData = document.getElementById(
+        "sysadmin-request-data"
+      );
+      const sysadminRequestSummary = document.getElementById(
+        "sysadmin-request-summary"
+      );
+      const sysadminAttachmentList = document.getElementById(
+        "sysadmin-attachment-list"
+      );
+
+      const fieldRefs = {
+        sso: document.getElementById("sso"),
+        ssoStatus: document.getElementById("sso-status"),
+        firstName: document.getElementById("first-name"),
+        lastName: document.getElementById("last-name"),
+        jobTitle: document.getElementById("job-title"),
+        jobFunction: document.getElementById("job-function"),
+        business: document.getElementById("business"),
+        ritm: document.getElementById("ritm"),
+        justification: document.getElementById("justification"),
+      };
+
+      const Stage = {
+        DRAFT: "draft",
+        APPSEC: "appsec",
+        REWORK: "rework",
+        APP_OWNER: "app_owner",
+        SYSADMIN: "sysadmin",
+        COMPLETED: "completed",
+      };
+
+      const stageMeta = {
+        [Stage.DRAFT]: {
+          label: "Draft",
+          variant: "status-pending",
+          detail: "Start by submitting a request.",
+        },
+        [Stage.APPSEC]: {
+          label: "AppSec review",
+          variant: "status-info",
+          detail: "AppSec is reviewing the submission.",
+        },
+        [Stage.REWORK]: {
+          label: "Rework required",
+          variant: "status-warning",
+          detail: "User must update details and resubmit.",
+        },
+        [Stage.APP_OWNER]: {
+          label: "App Owner review",
+          variant: "status-info",
+          detail: "Waiting for App Owners to approve.",
+        },
+        [Stage.SYSADMIN]: {
+          label: "Sysadmin execution",
+          variant: "status-info",
+          detail: "Sysadmin is applying the requested changes.",
+        },
+        [Stage.COMPLETED]: {
+          label: "Completed",
+          variant: "status-success",
+          detail: "The request is fully provisioned and closed.",
+        },
+      };
+
+      const statusVariants = [
+        "status-pending",
+        "status-success",
+        "status-info",
+        "status-warning",
+      ];
+
+      const appState = {
+        stage: Stage.DRAFT,
+        stageDetail: "",
+        previousStage: null,
+        request: null,
+      };
+
+      const attachmentLabels = {
+        creation: "User creation / reactivation template",
+        responsibility: "Responsibility request template",
+        removal: "Responsibility removal evidence",
+      };
+
+      let toastTimer;
+
+      function setPill(pill, variant, text) {
+        if (!pill) return;
+        statusVariants.forEach((cls) => pill.classList.remove(cls));
+        pill.classList.add(variant);
+        pill.textContent = text;
+      }
+
+      function getRequestSummary() {
+        if (!appState.request) return "No request submitted yet.";
+        const { sso, requestTypes } = appState.request;
+        return `${sso || "Unknown SSO"} · ${requestTypes.join(", ")}`;
+      }
+
+      function updateStatusUI() {
+        const meta = stageMeta[appState.stage];
+        const detailText = appState.stageDetail || meta.detail;
+        setPill(globalStatus, meta.variant, meta.label);
+        globalStatusDetail.textContent = detailText;
+
+        switch (appState.stage) {
+          case Stage.DRAFT:
+            setPill(userStatusPill, "status-pending", "Draft");
+            userStatusDetail.textContent = "Complete the form and submit.";
+            setPill(appsecStatusPill, "status-info", "Waiting submission");
+            appsecStatusDetail.textContent =
+              "Submit a request to start AppSec review.";
+            setPill(ownerStatusPill, "status-info", "Waiting on AppSec");
+            ownerStatusDetail.textContent =
+              "App Owners can act after AppSec approval.";
+            setPill(sysadminStatusPill, "status-info", "Waiting on App Owners");
+            sysadminStatusDetail.textContent =
+              "Moves here after App Owner approval.";
+            break;
+          case Stage.APPSEC:
+            setPill(userStatusPill, "status-success", "Submitted");
+            userStatusDetail.textContent = getRequestSummary();
+            setPill(appsecStatusPill, "status-pending", "In review");
+            appsecStatusDetail.textContent =
+              "AppSec is validating the submission.";
+            setPill(ownerStatusPill, "status-info", "Waiting on AppSec");
+            ownerStatusDetail.textContent =
+              "App Owners can act after AppSec approval.";
+            setPill(sysadminStatusPill, "status-info", "Waiting on App Owners");
+            sysadminStatusDetail.textContent =
+              "Moves here after App Owner approval.";
+            break;
+          case Stage.REWORK:
+            setPill(userStatusPill, "status-warning", "Action required");
+            userStatusDetail.textContent =
+              appState.stageDetail ||
+              "Update the main form and resubmit for AppSec.";
+            setPill(appsecStatusPill, "status-info", "Awaiting resubmission");
+            appsecStatusDetail.textContent =
+              "AppSec is waiting for updated details.";
+            setPill(ownerStatusPill, "status-info", "Waiting on AppSec");
+            ownerStatusDetail.textContent =
+              "App Owners can act after AppSec approval.";
+            setPill(sysadminStatusPill, "status-info", "Waiting on App Owners");
+            sysadminStatusDetail.textContent =
+              "Moves here after App Owner approval.";
+            break;
+          case Stage.APP_OWNER:
+            setPill(userStatusPill, "status-success", "Submitted");
+            userStatusDetail.textContent = getRequestSummary();
+            setPill(appsecStatusPill, "status-success", "Approved");
+            appsecStatusDetail.textContent =
+              "AppSec approved the submission.";
+            setPill(ownerStatusPill, "status-pending", "Awaiting approval");
+            ownerStatusDetail.textContent =
+              "Either owner A or B can approve the request.";
+            setPill(sysadminStatusPill, "status-info", "Waiting on App Owners");
+            sysadminStatusDetail.textContent =
+              "Moves here after App Owner approval.";
+            break;
+          case Stage.SYSADMIN:
+            setPill(userStatusPill, "status-success", "Submitted");
+            userStatusDetail.textContent = getRequestSummary();
+            setPill(appsecStatusPill, "status-success", "Approved");
+            appsecStatusDetail.textContent =
+              "AppSec approved the submission.";
+            setPill(ownerStatusPill, "status-success", "Approved");
+            ownerStatusDetail.textContent =
+              "App Owners dispatched to Sysadmin.";
+            setPill(sysadminStatusPill, "status-pending", "In progress");
+            sysadminStatusDetail.textContent =
+              "Sysadmin is provisioning the request.";
+            break;
+          case Stage.COMPLETED:
+            setPill(userStatusPill, "status-success", "Closed");
+            userStatusDetail.textContent =
+              appState.stageDetail || "Provisioning completed.";
+            setPill(appsecStatusPill, "status-success", "Closed");
+            appsecStatusDetail.textContent =
+              "No further action required for AppSec.";
+            setPill(ownerStatusPill, "status-success", "Closed");
+            ownerStatusDetail.textContent =
+              "App Owners approved and closed the loop.";
+            setPill(sysadminStatusPill, "status-success", "Closed");
+            sysadminStatusDetail.textContent =
+              "Sysadmin completed provisioning.";
+            break;
+        }
+
+        btnOwnerSendback.disabled = appState.stage !== Stage.APP_OWNER;
+        btnSysadminHold.disabled = appState.stage !== Stage.SYSADMIN;
+        btnSysadminComplete.disabled = appState.stage !== Stage.SYSADMIN;
+      }
+
+      function showToast(message, variant = "info") {
+        if (!appToast) return;
+        appToast.textContent = message;
+        appToast.classList.remove("info", "success", "warning", "show");
+        appToast.classList.add(variant, "show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          appToast.classList.remove("show");
+        }, 4000);
+      }
+
+      function setStage(stage, detail) {
+        const previousStage = appState.stage;
+        appState.previousStage = previousStage;
+        appState.stage = stage;
+        appState.stageDetail = detail || "";
+
+        if (stage === Stage.APPSEC && previousStage !== Stage.APPSEC) {
+          validationChecks.forEach((check) => (check.checked = false));
+          invalidCheckbox.checked = false;
+          appsecFeedbackInput.value = "";
+        }
+
+        if (stage === Stage.APP_OWNER && previousStage !== Stage.APP_OWNER) {
+          ownerSelectA.value = "pending";
+          ownerSelectB.value = "pending";
+        }
+
+        updateStatusUI();
+        syncAppsecActions();
+        syncOwnerApproval();
+
+        if (detail) {
+          const toastVariant =
+            stage === Stage.REWORK
+              ? "warning"
+              : stage === Stage.COMPLETED
+              ? "success"
+              : "info";
+          showToast(detail, toastVariant);
+        }
+
+        if (stage === Stage.REWORK) {
+          userForm.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        renderRequestPanels();
+      }
+
+      function syncAppsecActions() {
+        const checklistIncomplete = validationChecks.some(
+          (check) => !check.checked
+        );
+        const invalid = invalidCheckbox.checked;
+        const mustPushBack = checklistIncomplete || invalid;
+        const active = appState.stage === Stage.APPSEC;
+
+        if (active && mustPushBack) {
+          pushbackNotice.textContent = checklistIncomplete
+            ? "Validation checklist incomplete. Push the request back to the user with corrective comments."
+            : "Detected invalid data. Provide corrective comments and push the request back to the user for updates.";
+        }
+
+        pushbackNotice.classList.toggle(
+          "hidden",
+          !active || !mustPushBack
+        );
+        approveBtn.disabled = !active || mustPushBack;
+        requestInfoBtn.disabled = !active;
+        requestInfoBtn.textContent = mustPushBack
+          ? "Push back to user"
+          : "Request info / Push back";
+      }
+
+      function syncOwnerApproval() {
+        const ownerACleared = ownerSelectA.value === "approve";
+        const ownerBCleared = ownerSelectB.value === "approve";
+        const hasApproval = ownerACleared || ownerBCleared;
+        const active = appState.stage === Stage.APP_OWNER;
+
+        ownerDispatchBtn.disabled = !active || !hasApproval;
+        ownerWarning.classList.toggle("hidden", !active || hasApproval);
+        ownerWarning.textContent = active
+          ? "Need at least one owner approval before dispatching to Sysadmin."
+          : "Waiting for AppSec approval before App Owners can act.";
+      }
+
+      function getDetailedSummary() {
+        if (!appState.request) return "No submission available.";
+        const { sso, requestTypes, justification } = appState.request;
+        const parts = [];
+        if (sso) parts.push(sso);
+        if (requestTypes?.length) parts.push(requestTypes.join(", "));
+        if (justification) parts.push(`Justification: ${justification}`);
+        return parts.join(" · ") || "Submitted request details.";
+      }
+
+      function triggerFileDownload(file, suggestedName) {
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = suggestedName || file.name || "attachment";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      const requestPanels = [
+        {
+          wrapper: appsecRequestData,
+          summary: appsecRequestSummary,
+          list: appsecAttachmentList,
+        },
+        {
+          wrapper: ownerRequestData,
+          summary: ownerRequestSummary,
+          list: ownerAttachmentList,
+        },
+        {
+          wrapper: sysadminRequestData,
+          summary: sysadminRequestSummary,
+          list: sysadminAttachmentList,
+        },
+      ];
+
+      function renderRequestPanels() {
+        const hasRequest = Boolean(appState.request);
+        requestPanels.forEach((panel) => {
+          if (!panel?.wrapper || !panel.summary || !panel.list) return;
+          panel.wrapper.classList.toggle("hidden", !hasRequest);
+          panel.list.innerHTML = "";
+          if (!hasRequest) {
+            panel.summary.textContent = "No submission available.";
+            const li = document.createElement("li");
+            li.textContent = "No files uploaded yet.";
+            panel.list.appendChild(li);
+            return;
+          }
+
+          panel.summary.textContent = getDetailedSummary();
+          let hasAttachment = false;
+          Object.entries(attachmentLabels).forEach(([key, label]) => {
+            const attachment = appState.request.attachments?.[key];
+            if (attachment?.file) {
+              hasAttachment = true;
+              const li = document.createElement("li");
+              const span = document.createElement("span");
+              span.textContent = `${label}: ${attachment.name}`;
+              const btn = document.createElement("button");
+              btn.type = "button";
+              btn.textContent = "Download";
+              btn.addEventListener("click", () =>
+                triggerFileDownload(attachment.file, attachment.name)
+              );
+              li.appendChild(span);
+              li.appendChild(btn);
+              panel.list.appendChild(li);
+            }
+          });
+
+          if (!hasAttachment) {
+            const li = document.createElement("li");
+            li.textContent = "No files uploaded yet.";
+            panel.list.appendChild(li);
+          }
+        });
+      }
+
+      function collectFormData() {
+        const requiredFields = [
+          { id: "sso", label: "SSO" },
+          { id: "first-name", label: "First Name" },
+          { id: "last-name", label: "Last Name" },
+          { id: "job-title", label: "Job Title" },
+          { id: "job-function", label: "Job Function" },
+          { id: "business", label: "Business Unit" },
+        ];
+
+        for (const field of requiredFields) {
+          const el = document.getElementById(field.id);
+          if (!el.value.trim()) {
+            showToast(`${field.label} is required.`, "warning");
+            el.focus();
+            return null;
+          }
+        }
+
+        const requestTypes = [];
+        if (requestInputs.creation.checked) {
+          requestTypes.push("User creation / reactivation");
+          if (!fileState.creation) {
+            showToast(
+              "Attach the user creation / reactivation template.",
+              "warning"
+            );
+            return null;
+          }
+        }
+        if (requestInputs.add.checked) {
+          requestTypes.push("Responsibility request");
+          if (!fileState.responsibility) {
+            showToast("Attach the responsibility request template.", "warning");
+            return null;
+          }
+        }
+        if (requestInputs.remove.checked) {
+          requestTypes.push("Responsibility removal");
+          if (!fileState.removal) {
+            showToast("Attach the responsibility removal evidence.", "warning");
+            return null;
+          }
+        }
+
+        if (!requestTypes.length) {
+          showToast("Select at least one request type.", "warning");
+          return null;
+        }
+
+        return {
+          sso: fieldRefs.sso.value.trim(),
+          ssoStatus: fieldRefs.ssoStatus.value,
+          firstName: fieldRefs.firstName.value.trim(),
+          lastName: fieldRefs.lastName.value.trim(),
+          jobTitle: fieldRefs.jobTitle.value.trim(),
+          jobFunction: fieldRefs.jobFunction.value.trim(),
+          business: fieldRefs.business.value.trim(),
+          ritm: fieldRefs.ritm.value.trim(),
+          requestTypes,
+          justification: fieldRefs.justification.value.trim(),
+          comments: userCommentsInput.value.trim(),
+          attachments: {
+            creation: fileState.creation
+              ? { name: fileState.creation.name, file: fileState.creation }
+              : null,
+            responsibility: fileState.responsibility
+              ? {
+                  name: fileState.responsibility.name,
+                  file: fileState.responsibility,
+                }
+              : null,
+            removal: fileState.removal
+              ? { name: fileState.removal.name, file: fileState.removal }
+              : null,
+          },
+          submittedAt: new Date().toLocaleString(),
+        };
+      }
+
+      userForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const payload = collectFormData();
+        if (!payload) return;
+        appState.request = payload;
+        setStage(
+          Stage.APPSEC,
+          "Submitted to AppSec for validation."
+        );
+      });
+
+      btnSaveDraft.addEventListener("click", () => {
+        showToast("Draft saved locally for demo purposes.", "info");
+      });
+
+      btnSubmitRequestConsole.addEventListener("click", () => {
+        userForm.scrollIntoView({ behavior: "smooth", block: "start" });
+        showToast(
+          "Review the form above and click Submit to AppSec.",
+          "info"
+        );
+      });
+
+      requestInfoBtn.addEventListener("click", () => {
+        if (appState.stage !== Stage.APPSEC) {
+          showToast("No request awaiting AppSec review.", "warning");
+          return;
+        }
+        const feedback =
+          appsecFeedbackInput.value.trim() ||
+          "AppSec requested additional information.";
+        setStage(Stage.REWORK, feedback);
+      });
+
+      approveBtn.addEventListener("click", () => {
+        if (appState.stage !== Stage.APPSEC) {
+          showToast("No request awaiting AppSec approval.", "warning");
+          return;
+        }
+        const checklistIncomplete = validationChecks.some(
+          (check) => !check.checked
+        );
+        if (checklistIncomplete) {
+          showToast(
+            "Complete the validation checklist before approving.",
+            "warning"
+          );
+          return;
+        }
+        if (invalidCheckbox.checked) {
+          showToast("Resolve invalid data before approving.", "warning");
+          return;
+        }
+        setStage(
+          Stage.APP_OWNER,
+          "AppSec approved the request. Awaiting App Owner review."
+        );
+      });
+
+      btnOwnerSendback.addEventListener("click", () => {
+        if (appState.stage !== Stage.APP_OWNER) {
+          showToast("App Owners can act after AppSec approval.", "warning");
+          return;
+        }
+        const note =
+          ownerNoteInput.value.trim() ||
+          "App Owner requested clarification from AppSec.";
+        setStage(Stage.APPSEC, note);
+      });
+
+      ownerDispatchBtn.addEventListener("click", () => {
+        if (appState.stage !== Stage.APP_OWNER) {
+          showToast("App Owners can act after AppSec approval.", "warning");
+          return;
+        }
+        const ownerACleared = ownerSelectA.value === "approve";
+        const ownerBCleared = ownerSelectB.value === "approve";
+        if (!ownerACleared && !ownerBCleared) {
+          showToast(
+            "Need at least one owner approval before dispatching.",
+            "warning"
+          );
+          return;
+        }
+        setStage(
+          Stage.SYSADMIN,
+          "App Owner approved the request. Sysadmin can now execute."
+        );
+      });
+
+      btnSysadminHold.addEventListener("click", () => {
+        if (appState.stage !== Stage.SYSADMIN) {
+          showToast(
+            "Sysadmin actions unlock after App Owner approval.",
+            "warning"
+          );
+          return;
+        }
+        setStage(
+          Stage.SYSADMIN,
+          "Sysadmin placed the request on hold pending updates."
+        );
+      });
+
+      btnSysadminComplete.addEventListener("click", () => {
+        if (appState.stage !== Stage.SYSADMIN) {
+          showToast(
+            "Sysadmin actions unlock after App Owner approval.",
+            "warning"
+          );
+          return;
+        }
+        const notes =
+          sysadminCommentsInput.value.trim() ||
+          "Sysadmin completed provisioning and attached evidence.";
+        setStage(Stage.COMPLETED, notes);
+      });
+
+      invalidCheckbox.addEventListener("change", syncAppsecActions);
+      validationChecks.forEach((check) =>
+        check.addEventListener("change", syncAppsecActions)
+      );
+      ownerSelectA.addEventListener("change", syncOwnerApproval);
+      ownerSelectB.addEventListener("change", syncOwnerApproval);
+
+      updateStatusUI();
+      syncAppsecActions();
+      syncOwnerApproval();
+      renderRequestPanels();
+    </script>
+  </body>
+</html>
+
