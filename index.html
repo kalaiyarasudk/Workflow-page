@@ -1372,12 +1372,24 @@
 
       function getDetailedSummary() {
         if (!appState.request) return "No submission available.";
-        const { sso, requestTypes, justification } = appState.request;
-        const parts = [];
-        if (sso) parts.push(sso);
-        if (requestTypes?.length) parts.push(requestTypes.join(", "));
-        if (justification) parts.push(`Justification: ${justification}`);
-        return parts.join(" · ") || "Submitted request details.";
+        const { sso, ssoStatus, firstName, lastName, jobTitle, jobFunction, business, ritm } = appState.request;
+        
+        const details = [
+          { label: "SSO", value: sso },
+          { label: "SSO Status", value: ssoStatus },
+          { label: "First Name", value: firstName },
+          { label: "Last Name", value: lastName },
+          { label: "Job Title", value: jobTitle },
+          { label: "Job Function", value: jobFunction },
+          { label: "Business Unit", value: business },
+          { label: "ServiceNow RITM", value: ritm || "N/A" },
+        ];
+
+        return details
+          .map(
+            (item) => `<strong>${item.label}:</strong> ${item.value || "Not provided"}`
+          )
+          .join("<br>");
       }
 
       function triggerFileDownload(file, suggestedName) {
@@ -1412,19 +1424,23 @@
 
       function renderRequestPanels() {
         const hasRequest = Boolean(appState.request);
+        const summaryContent = hasRequest ? getDetailedSummary() : "No submission available.";
+
         requestPanels.forEach((panel) => {
-          if (!panel?.wrapper || !panel.summary || !panel.list) return;
+          if (!panel?.wrapper || !panel.summary) return;
           panel.wrapper.classList.toggle("hidden", !hasRequest);
+          panel.summary.innerHTML = summaryContent;
+
+          // Handle attachment list if it exists for the panel
+          if (!panel.list) return;
+
           panel.list.innerHTML = "";
+
           if (!hasRequest) {
-            panel.summary.textContent = "No submission available.";
-            const li = document.createElement("li");
-            li.textContent = "No files uploaded yet.";
-            panel.list.appendChild(li);
-            return;
+             panel.list.innerHTML = "<li>No files uploaded yet.</li>";
+             return;
           }
 
-          panel.summary.textContent = getDetailedSummary();
           let hasAttachment = false;
           Object.entries(attachmentLabels).forEach(([key, label]) => {
             const attachment = appState.request.attachments?.[key];
@@ -1432,7 +1448,7 @@
               hasAttachment = true;
               const li = document.createElement("li");
               const span = document.createElement("span");
-              span.textContent = `${label}: ${attachment.name}`;
+              span.textContent = `${label}: ${attachment.name}`; // This line was missing in your provided code
               const btn = document.createElement("button");
               btn.type = "button";
               btn.textContent = "Download";
@@ -1446,9 +1462,7 @@
           });
 
           if (!hasAttachment) {
-            const li = document.createElement("li");
-            li.textContent = "No files uploaded yet.";
-            panel.list.appendChild(li);
+            panel.list.innerHTML = "<li>No files uploaded yet.</li>";
           }
         });
       }
@@ -1665,4 +1679,3 @@
     </script>
   </body>
 </html>
-
