@@ -410,78 +410,22 @@
 
       <div id="request-view">
         <section>
-          <h2>Workflow Snapshot</h2>
-          <div class="timeline">
-            <div class="timeline-step" data-step="1">
-              <h3>User Request</h3>
-              <p>
-                Submit SSO-authenticated request with job details and supporting
-                templates for creation, responsibility changes, or removal.
-              </p>
-            </div>
-            <div class="timeline-step" data-step="2">
-              <h3>AppSec Validation (L1)</h3>
-              <p>
-                Review data, comment on issues, or approve when compliant. Push
-                back incorrect submissions to user with actionable feedback.
-              </p>
-            </div>
-            <div class="timeline-step" data-step="3">
-              <h3>App Owner Review (A/B)</h3>
-              <p>
-                Owners ensure business relevance and approve responsibilities.
-                Any rejection loops back to AppSec for further action.
-              </p>
-            </div>
-            <div class="timeline-step" data-step="4">
-              <h3>Sysadmin Fulfillment</h3>
-              <p>
-                Auto-generate ServiceNow RITM, apply changes, and attach
-                evidence, closing the loop with final notifications.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section>
           <h2>User Submission</h2>
           <form id="user-form">
-          <div class="split">
             <div class="form-group">
               <label for="sso">SSO</label>
               <input id="sso" type="text" placeholder="e.g. jsmith@corp" />
             </div>
+ 
             <div class="form-group">
-              <label for="sso-status">SSO Status</label>
-              <select id="sso-status">
-                <option>Active</option>
-                <option>Disabled</option>
-                <option>Pending</option>
-              </select>
+              <label for="full-name">Full Name</label>
+              <input id="full-name" type="text" />
             </div>
-          </div>
-
-          <div class="split">
-            <div class="form-group">
-              <label for="first-name">First Name</label>
-              <input id="first-name" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="last-name">Last Name</label>
-              <input id="last-name" type="text" />
-            </div>
-          </div>
-
-          <div class="split">
-            <div class="form-group">
-              <label for="job-title">Job Title</label>
-              <input id="job-title" type="text" />
-            </div>
+ 
             <div class="form-group">
               <label for="job-function">Job Function</label>
               <input id="job-function" type="text" />
             </div>
-          </div>
 
           <div class="form-group">
             <label for="business">Business Unit</label>
@@ -489,44 +433,65 @@
           </div>
 
           <div class="form-group">
-            <label for="ritm">ServiceNow RITM (if already raised)</label>
-            <input
-              id="ritm"
-              type="text"
-              placeholder="e.g. RITM0012345"
-            />
+            <label for="request-for-checklist">Request for checklist</label>
+            <select id="request-for-checklist">
+              <option value="">Select a team</option>
+              <option value="support">Support Team</option>
+              <option value="business">Business Team</option>
+            </select>
           </div>
 
-          <div class="form-group" id="request-type-group">
-            <label>Request Type</label>
-            <div class="checkbox-group">
-              <label>
-                <input type="checkbox" id="req-user-creation" />
-                User creation / reactivation
-              </label>
-              <label>
-                <input type="checkbox" id="req-responsibility-request" /> Responsibility request
-              </label>
-              <label>
-                <input type="checkbox" id="req-responsibility-removal" /> Responsibility removal
-              </label>
+          <div id="support-team-fields" class="hidden">
+            <div class="form-group">
+              <label>Request Type</label>
+              <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="support-req-user-creation" />
+                  User creation / reactivation
+                </label>
+                <label>
+                  <input type="checkbox" id="support-req-responsibility-request" /> Responsibility request
+                </label>
+                <label>
+                  <input type="checkbox" id="support-req-responsibility-removal" /> Responsibility removal
+                </label>
+              </div>
             </div>
           </div>
 
-          <div id="user-creation-block" class="template-block hidden">
-            <div class="info-box" style="margin-bottom: 1rem">
-              <strong>User creation / reactivation details</strong>
-              <p style="margin: 0">
-                Use the template below to capture mandatory provisioning details.
-                Ensure job data is accurate before submission or reactivation.
+          <div id="business-team-fields" class="hidden">
+            <div class="form-group">
+              <label>Request Type</label>
+              <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="business-req-user-creation" />
+                  User creation / reactivation
+                </label>
+                <label>
+                  <input type="checkbox" id="business-req-responsibility-request" /> Responsibility request
+                </label>
+                <label>
+                  <input type="checkbox" id="business-req-responsibility-removal" /> Responsibility removal
+                </label>
+              </div>
+            </div>
+            <div class="form-group hidden" id="manager-approval-group">
+              <label for="upload-manager-approval">Attach Manager Approval</label>
+              <input id="upload-manager-approval" type="file" />
+              <p class="file-hint" data-file-hint="upload-manager-approval">
+                Manager's email or signed approval is required for business team requests.
               </p>
             </div>
+          </div>
+
+
+          <div id="user-creation-block" class="template-block hidden">
+            
             <div class="download-box">
               <div>
-                <strong>User Creation / Reactivation Template</strong>
+                <strong>User Creation / Reactivation Doc</strong>
                 <p style="margin: 0; color: #475467">
-                  Download the form, fill required access attributes, and attach
-                  the completed file for AppSec validation.
+                  Follow the Doc for user creation or reactivation details.
                 </p>
               </div>
               <button
@@ -534,15 +499,8 @@
                 class="template-download"
                 data-template="creation"
               >
-                Download template
+                Download Doc
               </button>
-            </div>
-            <div class="form-group">
-              <label for="upload-creation">Attach completed template</label>
-              <input id="upload-creation" type="file" />
-              <p class="file-hint" data-file-hint="upload-creation">
-                No file selected
-              </p>
             </div>
           </div>
 
@@ -598,44 +556,37 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="ritm-group">
+            <label for="ritm">ServiceNow RITM (if already raised)</label>
+            <input
+              id="ritm"
+              type="text"
+              placeholder="e.g. RITM0012345"
+            />
+          </div>
+
+          <div class="form-group" id="justification-group">
             <label for="justification">Business justification</label>
             <textarea id="justification"></textarea>
           </div>
 
-          <button type="submit">Submit to AppSec</button>
+          <button type="submit" id="btn-main-submit">Submit to AppSec</button>
           </form>
         </section>
 
-        <section>
-          <h2>Role Workspaces</h2>
-          <div class="grid">
-            <article class="stage">
-              <h3>AppSec (L1 Approver)</h3>
-              <ul>
-                <li>Validation checklist & SLA timer</li>
-                <li>Reject with comments or approve</li>
-                <li>Push back to user for corrections</li>
-              </ul>
-            </article>
-            <article class="stage">
-              <h3>App Owners A/B</h3>
-              <ul>
-                <li>View AppSec notes and attachments</li>
-                <li>Parallel approvals with audit log</li>
-                <li>Decision required from both A and B</li>
-              </ul>
-            </article>
-            <article class="stage">
-              <h3>Sysadmin</h3>
-              <ul>
-                <li>Auto ServiceNow RITM creation</li>
-                <li>Execution notes & evidence upload</li>
-                <li>Completion notifications to stakeholders</li>
-              </ul>
-            </article>
-          </div>
-        </section>
+        <div
+          id="user-creation-sop"
+          class="info-box hidden"
+          style="background: #eff4ff; border-color: #b2c5ff; color: #1c46ff;"
+        >
+          <strong>New User Creation Process</strong>
+          <p style="margin: 0;">
+            User creation requests cannot be submitted through this workflow.
+            Please follow the standard HR onboarding process to provision a new
+            user account. This portal is for managing access for existing users
+            only.
+          </p>
+        </div>
       </div>
 
       <div id="testing-view" class="hidden">
@@ -680,6 +631,45 @@
             <p id="user-status-detail" class="status-detail">
               Draft in progress.
             </p>
+          <div id="user-request-data" class="template-block hidden">
+            <div class="split">
+              <div>
+                <strong>Submitted request overview</strong>
+                <p id="user-request-summary" class="status-detail">
+                  No submission available.
+                </p>
+              </div>
+              <div>
+                <strong>Attachments</strong>
+                <ul
+                  id="user-attachment-list"
+                  class="attachment-list"
+                  style="margin-top: 0.35rem"
+                >
+                  <li>No files uploaded yet.</li>
+                </ul>
+                <div class="form-group" style="margin-top: 0.75rem">
+                  <label for="user-replace-type">Upload revised file</label>
+                  <select id="user-replace-type">
+                    <option value="">Select attachment to replace</option>
+                    <option value="responsibility">
+                      Responsibility request template
+                    </option>
+                    <option value="removal">
+                      Responsibility removal evidence
+                    </option>
+                    <option value="managerApproval">
+                      Manager approval evidence
+                    </option>
+                  </select>
+                  <input id="user-replace-file" type="file" />
+                  <p class="file-hint" id="user-replace-hint">
+                    Choose a type and file to replace the existing attachment.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
             <div class="form-group">
               <label for="user-comments">Comments to AppSec</label>
               <textarea id="user-comments" placeholder="Add context for validation"></textarea>
@@ -736,7 +726,7 @@
               </label>
               <label>
                 <input type="checkbox" id="appsec-justification" />
-                Business justification complete
+                IT BSA
               </label>
               <label>
                 <input type="checkbox" id="appsec-sod" />
@@ -906,39 +896,78 @@
 
     <footer>&copy; 2025 Approval Workflow Experience</footer>
     <script>
-      const requestInputs = {
-        creation: document.getElementById("req-user-creation"),
-        add: document.getElementById("req-responsibility-request"),
-        remove: document.getElementById("req-responsibility-removal"),
-      };
+            const requestForChecklist = document.getElementById("request-for-checklist");
+            const supportTeamFields = document.getElementById("support-team-fields");
+            const businessTeamFields = document.getElementById("business-team-fields");
+      
+            requestForChecklist.addEventListener("change", () => {
+              const selectedValue = requestForChecklist.value;
+              if (selectedValue === "support") {
+                supportTeamFields.classList.remove("hidden");
+                businessTeamFields.classList.add("hidden");
+              } else if (selectedValue === "business") {
+                supportTeamFields.classList.add("hidden");
+                businessTeamFields.classList.remove("hidden");
+              } else {
+                supportTeamFields.classList.add("hidden");
+                businessTeamFields.classList.add("hidden");
+              }
+              syncRequestVisibility();
+            });
 
-      const blocks = {
-        creation: document.getElementById("user-creation-block"),
-        add: document.getElementById("responsibility-request-block"),
-        remove: document.getElementById("responsibility-removal-block"),
-      };
+            const requestInputs = {
+              creation: [document.getElementById("support-req-user-creation"), document.getElementById("business-req-user-creation")],
+              add: [document.getElementById("support-req-responsibility-request"), document.getElementById("business-req-responsibility-request")],
+              remove: [document.getElementById("support-req-responsibility-removal"), document.getElementById("business-req-responsibility-removal")],
+            };
 
-      function syncRequestVisibility() {
-        const creationSelected = requestInputs.creation.checked;
+            const blocks = {
+              creation: document.getElementById("user-creation-block"),
+              add: document.getElementById("responsibility-request-block"),
+              remove: document.getElementById("responsibility-removal-block"),
+            };
 
-        if (creationSelected) {
-          requestInputs.add.checked = false;
-          requestInputs.remove.checked = false;
-        }
+            const mainSubmitBtn = document.getElementById("btn-main-submit");
+            const userCreationSop = document.getElementById("user-creation-sop");
+            const ritmGroup = document.getElementById("ritm-group");
+            const justificationGroup = document.getElementById("justification-group");
+            const managerApprovalGroup = document.getElementById("manager-approval-group");
 
-        requestInputs.add.disabled = creationSelected;
-        requestInputs.remove.disabled = creationSelected;
+            function syncRequestVisibility() {
+              const creationSelected = requestInputs.creation.some(input => input.checked);
+              const addSelected = requestInputs.add.some(input => input.checked);
+              const removeSelected = requestInputs.remove.some(input => input.checked);
 
-        blocks.creation.classList.toggle("hidden", !creationSelected);
-        blocks.add.classList.toggle("hidden", !requestInputs.add.checked);
-        blocks.remove.classList.toggle("hidden", !requestInputs.remove.checked);
-      }
+              if (creationSelected) {
+                requestInputs.add.forEach(input => input.checked = false);
+                requestInputs.remove.forEach(input => input.checked = false);
+              }
 
-      Object.values(requestInputs).forEach((input) => {
-        input.addEventListener("change", syncRequestVisibility);
-      });
+              requestInputs.add.forEach(input => input.disabled = creationSelected);
+              requestInputs.remove.forEach(input => input.disabled = creationSelected);
+              mainSubmitBtn.disabled = creationSelected;
 
-      syncRequestVisibility();
+              userCreationSop.classList.toggle("hidden", !creationSelected);
+
+              blocks.creation.classList.toggle("hidden", !creationSelected);
+              blocks.add.classList.toggle("hidden", !addSelected);
+              blocks.remove.classList.toggle("hidden", !removeSelected);
+
+              ritmGroup.classList.toggle("hidden", creationSelected);
+              justificationGroup.classList.toggle("hidden", creationSelected);
+
+              const businessManagerNeeded =
+                requestForChecklist.value === "business" && (addSelected || removeSelected);
+              if (managerApprovalGroup) {
+                managerApprovalGroup.classList.toggle("hidden", !businessManagerNeeded);
+              }
+            }
+
+            Object.values(requestInputs).flat().forEach((input) => {
+              input.addEventListener("change", syncRequestVisibility);
+            });
+
+            syncRequestVisibility();
 
       const primaryTabs = document.querySelectorAll(".primary-tab");
       const requestView = document.getElementById("request-view");
@@ -959,6 +988,7 @@
         creation: null,
         responsibility: null,
         removal: null,
+        managerApproval: null,
       };
 
       function bindFileInput(inputId, key) {
@@ -979,6 +1009,7 @@
       bindFileInput("upload-creation", "creation");
       bindFileInput("upload-request", "responsibility");
       bindFileInput("upload-removal", "removal");
+      bindFileInput("upload-manager-approval", "managerApproval");
 
       const templateContent = {
         creation:
@@ -1069,6 +1100,9 @@
       const userStatusDetail = document.getElementById("user-status-detail");
       const appsecStatusPill = document.getElementById("appsec-status-pill");
       const appsecStatusDetail = document.getElementById("appsec-status-detail");
+      const userRequestData = document.getElementById("user-request-data");
+      const userRequestSummary = document.getElementById("user-request-summary");
+      const userAttachmentList = document.getElementById("user-attachment-list");
       const appsecRequestData = document.getElementById("appsec-request-data");
       const appsecRequestSummary = document.getElementById(
         "appsec-request-summary"
@@ -1098,18 +1132,34 @@
       const sysadminAttachmentList = document.getElementById(
         "sysadmin-attachment-list"
       );
+      const userReplaceType = document.getElementById("user-replace-type");
+      const userReplaceFile = document.getElementById("user-replace-file");
+      const userReplaceHint = document.getElementById("user-replace-hint");
 
       const fieldRefs = {
         sso: document.getElementById("sso"),
-        ssoStatus: document.getElementById("sso-status"),
-        firstName: document.getElementById("first-name"),
-        lastName: document.getElementById("last-name"),
-        jobTitle: document.getElementById("job-title"),
+        fullName: document.getElementById("full-name"),
         jobFunction: document.getElementById("job-function"),
         business: document.getElementById("business"),
         ritm: document.getElementById("ritm"),
         justification: document.getElementById("justification"),
       };
+
+      function isBusinessTeamSelected() {
+        return requestForChecklist.value === "business";
+      }
+
+      function getTeamLabel() {
+        if (requestForChecklist.value === "support") return "Support";
+        if (requestForChecklist.value === "business") return "Business";
+        return "N/A";
+      }
+
+      function isRequestTypeSelected(groupKey) {
+        const group = requestInputs[groupKey];
+        if (!Array.isArray(group)) return false;
+        return group.some((input) => input && input.checked);
+      }
 
       const Stage = {
         DRAFT: "draft",
@@ -1171,6 +1221,7 @@
         creation: "User creation / reactivation template",
         responsibility: "Responsibility request template",
         removal: "Responsibility removal evidence",
+        managerApproval: "Manager approval evidence",
       };
 
       let toastTimer;
@@ -1372,24 +1423,66 @@
 
       function getDetailedSummary() {
         if (!appState.request) return "No submission available.";
-        const { sso, ssoStatus, firstName, lastName, jobTitle, jobFunction, business, ritm } = appState.request;
-        
-        const details = [
-          { label: "SSO", value: sso },
-          { label: "SSO Status", value: ssoStatus },
-          { label: "First Name", value: firstName },
-          { label: "Last Name", value: lastName },
-          { label: "Job Title", value: jobTitle },
-          { label: "Job Function", value: jobFunction },
-          { label: "Business Unit", value: business },
-          { label: "ServiceNow RITM", value: ritm || "N/A" },
-        ];
+        const {
+          sso,
+          fullName,
+          jobFunction,
+          business,
+          ritm,
+          teamType,
+          requestTypes,
+          submittedAt,
+          comments,
+          appsecFeedback,
+          ownerNote,
+          sysadminNotes,
+        } = appState.request;
 
-        return details
-          .map(
-            (item) => `<strong>${item.label}:</strong> ${item.value || "Not provided"}`
-          )
-          .join("<br>");
+        const userSection = [
+          `<strong>Requester</strong>`,
+          `SSO: ${sso || "Not provided"}`,
+          `Full Name: ${fullName || "Not provided"}`,
+          `Job Function: ${jobFunction || "Not provided"}`,
+          `Business Unit: ${business || "Not provided"}`,
+          `ServiceNow RITM: ${ritm || "N/A"}`,
+        ].join("<br>");
+
+        const detailsSection = [
+          `<br><strong>Request details</strong>`,
+          `Team: ${teamType || "N/A"}`,
+          `Request types: ${
+            Array.isArray(requestTypes) && requestTypes.length
+              ? requestTypes.join(", ")
+              : "Not specified"
+          }`,
+          `Submitted: ${submittedAt || "N/A"}`,
+        ].join("<br>");
+
+        const notesLines = [];
+        if (comments) {
+          notesLines.push(`<strong>User notes to AppSec:</strong> ${comments}`);
+        }
+        if (appsecFeedback) {
+          notesLines.push(
+            `<strong>AppSec notes to next team:</strong> ${appsecFeedback}`
+          );
+        }
+        if (ownerNote) {
+          notesLines.push(
+            `<strong>App Owner notes to Sysadmin:</strong> ${ownerNote}`
+          );
+        }
+        if (sysadminNotes) {
+          notesLines.push(
+            `<strong>Sysadmin execution notes:</strong> ${sysadminNotes}`
+          );
+        }
+
+        const notesSection = notesLines.length
+          ? `<br><strong>Notes trail</strong><br>${notesLines.join("<br>")}`
+          : "";
+
+        return `${userSection}<br>${detailsSection}${notesSection}`;
       }
 
       function triggerFileDownload(file, suggestedName) {
@@ -1405,6 +1498,11 @@
       }
 
       const requestPanels = [
+        {
+          wrapper: userRequestData,
+          summary: userRequestSummary,
+          list: userAttachmentList,
+        },
         {
           wrapper: appsecRequestData,
           summary: appsecRequestSummary,
@@ -1467,12 +1565,53 @@
         });
       }
 
+      if (userReplaceFile && userReplaceType) {
+        userReplaceFile.addEventListener("change", (event) => {
+          const key = userReplaceType.value;
+          const file = event.target.files[0] || null;
+
+          if (!appState.request) {
+            showToast("No submitted request to update.", "warning");
+            userReplaceFile.value = "";
+            return;
+          }
+
+          if (!key) {
+            showToast("Select which attachment to replace.", "warning");
+            userReplaceFile.value = "";
+            return;
+          }
+
+          if (!file) {
+            return;
+          }
+
+          if (!attachmentLabels[key]) {
+            showToast("Unsupported attachment type.", "warning");
+            userReplaceFile.value = "";
+            return;
+          }
+
+          // Update in-memory attachment state so all teams see the new file
+          appState.request.attachments = appState.request.attachments || {};
+          appState.request.attachments[key] = { name: file.name, file };
+
+          // Keep fileState in sync so a fresh resubmission uses the new file
+          fileState[key] = file;
+
+          if (userReplaceHint) {
+            userReplaceHint.textContent = `Replaced ${attachmentLabels[key]} with ${file.name}`;
+          }
+
+          showToast(`Updated ${attachmentLabels[key]} for resubmission.`, "success");
+          renderRequestPanels();
+        });
+      }
+
       function collectFormData() {
         const requiredFields = [
           { id: "sso", label: "SSO" },
-          { id: "first-name", label: "First Name" },
-          { id: "last-name", label: "Last Name" },
-          { id: "job-title", label: "Job Title" },
+          { id: "full-name", label: "Full Name" },
           { id: "job-function", label: "Job Function" },
           { id: "business", label: "Business Unit" },
         ];
@@ -1486,25 +1625,43 @@
           }
         }
 
-        const requestTypes = [];
-        if (requestInputs.creation.checked) {
-          requestTypes.push("User creation / reactivation");
-          if (!fileState.creation) {
-            showToast(
-              "Attach the user creation / reactivation template.",
-              "warning"
-            );
-            return null;
-          }
+        if (!requestForChecklist.value) {
+          showToast("Select a team in 'Request for checklist'.", "warning");
+          requestForChecklist.focus();
+          return null;
         }
-        if (requestInputs.add.checked) {
+
+        const requestTypes = [];
+        const creationSelected = isRequestTypeSelected("creation");
+        const addSelected = isRequestTypeSelected("add");
+        const removeSelected = isRequestTypeSelected("remove");
+
+        if (creationSelected) {
+          showToast(
+            "New user creation requests cannot be submitted here. Please follow the standard HR onboarding process.",
+            "warning"
+          );
+          return null;
+        }
+
+        const needsManagerApproval =
+          isBusinessTeamSelected() && (addSelected || removeSelected);
+        if (needsManagerApproval && !fileState.managerApproval) {
+          showToast(
+            "Attach manager approval for business team responsibility requests.",
+            "warning"
+          );
+          return null;
+        }
+
+        if (addSelected) {
           requestTypes.push("Responsibility request");
           if (!fileState.responsibility) {
             showToast("Attach the responsibility request template.", "warning");
             return null;
           }
         }
-        if (requestInputs.remove.checked) {
+        if (removeSelected) {
           requestTypes.push("Responsibility removal");
           if (!fileState.removal) {
             showToast("Attach the responsibility removal evidence.", "warning");
@@ -1518,11 +1675,9 @@
         }
 
         return {
+          teamType: getTeamLabel(),
           sso: fieldRefs.sso.value.trim(),
-          ssoStatus: fieldRefs.ssoStatus.value,
-          firstName: fieldRefs.firstName.value.trim(),
-          lastName: fieldRefs.lastName.value.trim(),
-          jobTitle: fieldRefs.jobTitle.value.trim(),
+          fullName: fieldRefs.fullName.value.trim(),
           jobFunction: fieldRefs.jobFunction.value.trim(),
           business: fieldRefs.business.value.trim(),
           ritm: fieldRefs.ritm.value.trim(),
@@ -1530,18 +1685,26 @@
           justification: fieldRefs.justification.value.trim(),
           comments: userCommentsInput.value.trim(),
           attachments: {
-            creation: fileState.creation
-              ? { name: fileState.creation.name, file: fileState.creation }
-              : null,
-            responsibility: fileState.responsibility
-              ? {
-                  name: fileState.responsibility.name,
-                  file: fileState.responsibility,
-                }
-              : null,
-            removal: fileState.removal
-              ? { name: fileState.removal.name, file: fileState.removal }
-              : null,
+            // Creation uploads are not used because creation requests are blocked
+            creation: null,
+            responsibility:
+              addSelected && fileState.responsibility
+                ? {
+                    name: fileState.responsibility.name,
+                    file: fileState.responsibility,
+                  }
+                : null,
+            removal:
+              removeSelected && fileState.removal
+                ? { name: fileState.removal.name, file: fileState.removal }
+                : null,
+            managerApproval:
+              needsManagerApproval && fileState.managerApproval
+                ? {
+                    name: fileState.managerApproval.name,
+                    file: fileState.managerApproval,
+                  }
+                : null,
           },
           submittedAt: new Date().toLocaleString(),
         };
@@ -1578,6 +1741,9 @@
         const feedback =
           appsecFeedbackInput.value.trim() ||
           "AppSec requested additional information.";
+        if (appState.request) {
+          appState.request.appsecFeedback = feedback;
+        }
         setStage(Stage.REWORK, feedback);
       });
 
@@ -1600,6 +1766,10 @@
           showToast("Resolve invalid data before approving.", "warning");
           return;
         }
+        const feedback = appsecFeedbackInput.value.trim();
+        if (feedback && appState.request) {
+          appState.request.appsecFeedback = feedback;
+        }
         setStage(
           Stage.APP_OWNER,
           "AppSec approved the request. Awaiting App Owner review."
@@ -1614,6 +1784,9 @@
         const note =
           ownerNoteInput.value.trim() ||
           "App Owner requested clarification from AppSec.";
+        if (appState.request) {
+          appState.request.ownerNote = note;
+        }
         setStage(Stage.APPSEC, note);
       });
 
@@ -1631,6 +1804,10 @@
           );
           return;
         }
+        const note = ownerNoteInput.value.trim();
+        if (note && appState.request) {
+          appState.request.ownerNote = note;
+        }
         setStage(
           Stage.SYSADMIN,
           "App Owner approved the request. Sysadmin can now execute."
@@ -1644,6 +1821,10 @@
             "warning"
           );
           return;
+        }
+        const notes = sysadminCommentsInput.value.trim();
+        if (notes && appState.request) {
+          appState.request.sysadminNotes = notes;
         }
         setStage(
           Stage.SYSADMIN,
@@ -1662,6 +1843,9 @@
         const notes =
           sysadminCommentsInput.value.trim() ||
           "Sysadmin completed provisioning and attached evidence.";
+        if (appState.request) {
+          appState.request.sysadminNotes = notes;
+        }
         setStage(Stage.COMPLETED, notes);
       });
 
