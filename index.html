@@ -391,13 +391,9 @@
   </head>
   <body>
     <header>
-      <p class="badge">Four-Level Approval Flow</p>
-      <h1>Access & Responsibility Approval Portal</h1>
-      <p>
-        Streamlined, auditable access requests with AppSec validation, App
-        Owner oversight, and Sysadmin fulfillment. Each step captures comments,
-        attachments, and status changes for compliance-ready traceability.
-      </p>
+      
+      <h1>Demo Workflow</h1>
+    
     </header>
 
     <main>
@@ -414,7 +410,7 @@
           <form id="user-form">
             <div class="form-group">
               <label for="sso">SSO</label>
-              <input id="sso" type="text" placeholder="e.g. jsmith@corp" />
+              <input id="sso" type="text" placeholder="e.g. kalai@corp" />
             </div>
  
             <div class="form-group">
@@ -742,6 +738,13 @@
             <label for="appsec-feedback">Feedback / push-back comments</label>
             <textarea id="appsec-feedback"></textarea>
           </div>
+          <div class="form-group">
+            <label for="appsec-validation-file">Upload validation file</label>
+            <input id="appsec-validation-file" type="file" />
+            <p class="file-hint" data-file-hint="appsec-validation-file">
+              Upload validation documentation for App Owner and Sysadmin review.
+            </p>
+          </div>
           <div id="appsec-pushback" class="warning-box hidden">
             Detected invalid data. Provide corrective comments and push the
             request back to the user for updates.
@@ -894,7 +897,7 @@
       </div>
     </main>
 
-    <footer>&copy; 2025 Approval Workflow Experience</footer>
+    <footer>&copy; Kalaiyarasudk Demo Workflow Experience</footer>
     <script>
             const requestForChecklist = document.getElementById("request-for-checklist");
             const supportTeamFields = document.getElementById("support-team-fields");
@@ -1010,6 +1013,28 @@
       bindFileInput("upload-request", "responsibility");
       bindFileInput("upload-removal", "removal");
       bindFileInput("upload-manager-approval", "managerApproval");
+
+      // Special handler for AppSec validation file
+      const appsecValidationFileInput = document.getElementById("appsec-validation-file");
+      const appsecValidationFileHint = document.querySelector('[data-file-hint="appsec-validation-file"]');
+      if (appsecValidationFileInput) {
+        appsecValidationFileInput.addEventListener("change", (event) => {
+          const file = event.target.files[0] || null;
+          if (file && appState.request) {
+            appState.request.attachments = appState.request.attachments || {};
+            appState.request.attachments.validationFile = { name: file.name, file };
+            if (appsecValidationFileHint) {
+              appsecValidationFileHint.textContent = `Attached: ${file.name}`;
+            }
+            showToast("Validation file uploaded. Visible to App Owner and Sysadmin.", "success");
+            renderRequestPanels();
+          } else if (!file) {
+            if (appsecValidationFileHint) {
+              appsecValidationFileHint.textContent = "Upload validation documentation for App Owner and Sysadmin review.";
+            }
+          }
+        });
+      }
 
       const templateContent = {
         creation:
@@ -1222,6 +1247,7 @@
         responsibility: "Responsibility request template",
         removal: "Responsibility removal evidence",
         managerApproval: "Manager approval evidence",
+        validationFile: "AppSec validation file",
       };
 
       let toastTimer;
@@ -1502,21 +1528,25 @@
           wrapper: userRequestData,
           summary: userRequestSummary,
           list: userAttachmentList,
+          panelType: "user",
         },
         {
           wrapper: appsecRequestData,
           summary: appsecRequestSummary,
           list: appsecAttachmentList,
+          panelType: "appsec",
         },
         {
           wrapper: ownerRequestData,
           summary: ownerRequestSummary,
           list: ownerAttachmentList,
+          panelType: "owner",
         },
         {
           wrapper: sysadminRequestData,
           summary: sysadminRequestSummary,
           list: sysadminAttachmentList,
+          panelType: "sysadmin",
         },
       ];
 
@@ -1541,6 +1571,10 @@
 
           let hasAttachment = false;
           Object.entries(attachmentLabels).forEach(([key, label]) => {
+            // Validation file is only visible to App Owner and Sysadmin
+            if (key === "validationFile" && (panel.panelType === "user" || panel.panelType === "appsec")) {
+              return;
+            }
             const attachment = appState.request.attachments?.[key];
             if (attachment?.file) {
               hasAttachment = true;
